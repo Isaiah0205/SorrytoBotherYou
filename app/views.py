@@ -11,6 +11,40 @@ from .forms import *
 # Create your views here.
 @login_required(login_url = 'login')
 def home(request):
+    u = request.user
+    if request.method == 'POST':
+                    original_password = request.POST.get('original_password')
+                    password_x1 = request.POST.get('password_x1')
+                    password_x2 = request.POST.get('password_x2')
+                    new_username = request.POST.get('new_username')
+                    if original_password != None:
+                        if u.check_password(original_password) == True:
+                            if password_x1 == password_x2:
+                                u.set_password(password_x1)
+                                u.save()
+                                messages.info(request, 'Password is updated.')
+                                return redirect('home')
+
+                            else:
+                                messages.info(request, 'Passwords do not match.')
+                                return redirect('home')
+                        else:
+                                messages.info(request, 'Passwords is incorrect.')
+                                return redirect('home')
+                    elif new_username != None:
+                        p = Person.objects.get(user = u)
+                        u.username = new_username
+                        u.save()
+                        p.name = new_username
+                        p.save()
+                        messages.info(request, 'Username has been changed.')
+                        return redirect('login')
+                        
+                    else:
+                        pass
+
+
+
 
     return render(request,'app/home.html')
 
