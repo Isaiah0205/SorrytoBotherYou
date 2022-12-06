@@ -7,6 +7,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from .forms import *
+from django.core.mail import send_mass_mail
+from django.core.mail import send_mail
+from django.conf import settings
+from django.shortcuts import render
+from django.db.models import Sum
+from django.http import JsonResponse
 
 # Create your views here.
 @login_required(login_url = 'login')
@@ -56,7 +62,7 @@ def send_message(request):
 @login_required(login_url = 'login')
 def send_channel_message(request):
 
-    return render(request,'app/send_channel_message.html')
+    return render(request,'app/Stats.html')
 
 def loginPage(request):
     if request.user.is_authenticated:
@@ -101,3 +107,31 @@ def registerPage(request):
 def logoutUser(request):
     logout(request)
     return redirect('login')
+
+
+@login_required(login_url = 'login')
+def send_email(request):
+    form = SendEmailForm()
+    if request.method == "POST":
+        form = SendEmailForm(request.POST)
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = request.POST.get('recipient_list')
+        if form.is_valid():
+            send_mail(subject, message, from_email, [recipient_list], fail_silently=False)
+            return redirect('/')
+    context = {"form": form}
+    return render(request, 'app/send_message.html', context)
+
+def population_chart():
+    labels = []
+    data = []
+    queryset = Email.objects.values('recipent_list').annotate(country_population=Sum('subject')).order_by('recipent_list')
+    for entry in queryset:
+        labels.append(entry['subject'])
+        data.append(entry['recipent_list'])
+    return JsonResponse(data={
+        'labels': labels,
+        'data': data,
+    })

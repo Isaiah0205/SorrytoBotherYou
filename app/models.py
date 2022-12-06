@@ -31,3 +31,8 @@ class DirectMessage(models.Model):
     message_data = models.CharField(max_length=200, null=True)
    
 
+class Email(models.Model):
+    subject = models.CharField(max_length=200, null=True)
+    message = models.CharField(max_length=200, null=True)
+    recipient_list = models.CharField(max_length=600, null=True)
+

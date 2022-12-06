@@ -6,3 +6,4 @@ from .models import *
 admin.site.register(Person)
 admin.site.register(Channel)
 admin.site.register(DirectMessage)
+admin.site.register(Email)

@@ -1,1 +1,27 @@
-<h1>DM</h1>
+{% load static %}
+{% block contnent %}
+{% comment %} <form class="form-inline" method="POST" action="">
+    <div class="form-group">
+      <label for="exampleInputName2">Subject</label>
+      <input type="text" class="form-control" name="subject" placeholder="Jane Doe">
+    </div>
+    <div class="form-group">
+      <label for="exampleInputEmail2">Message</label>
+      <input type="text" class="form-control" name="message" placeholder="jane.doe@example.com">
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail2">Recipient</label>
+        <input type="email" class="form-control" name="recipient_list" placeholder="jane.doe@example.com">
+      </div>
+    <button type="submit" class="btn btn-default">Send Email</button>
+  </form> {% endcomment %}
+
+<form method="POST" action="">
+    {% csrf_token %}
+    <input class = "user-name-place" type="text" name="subject" placeholder="Subject...">
+    <input class = "user-name-place" type="text" name="message" placeholder="Message...">
+    <input class = "user-name-place" type="email" name="recipient_list" placeholder="Recipients...">
+    <input type= "submit" name = "Submit">
+</form>
+
+{% endblock contnent %}
