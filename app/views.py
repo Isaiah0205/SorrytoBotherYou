@@ -119,19 +119,27 @@ def send_email(request):
         from_email = settings.EMAIL_HOST_USER
         recipient_list = request.POST.get('recipient_list')
         if form.is_valid():
+            form.save()
             send_mail(subject, message, from_email, [recipient_list], fail_silently=False)
             return redirect('/')
     context = {"form": form}
     return render(request, 'app/send_message.html', context)
+def stat(request):
+    return render(request, 'Stats.html')
 
-def population_chart():
+def population_chart(request):
     labels = []
     data = []
-    queryset = Email.objects.values('recipent_list').annotate(country_population=Sum('subject')).order_by('recipent_list')
+    queryset = Email.objects.values('recipient_list').annotate(messages=Sum('message')).order_by('recipient_list')
+    print(Email.objects.all())
     for entry in queryset:
-        labels.append(entry['subject'])
-        data.append(entry['recipent_list'])
+        labels.append(entry['recipient_list'])
+        data.append(entry['recipient_list'])
     return JsonResponse(data={
         'labels': labels,
         'data': data,
     })
+    # return render(request, 'app/Stats.html', {
+    #     'labels': labels,
+    #     'data': data,
+    # })
